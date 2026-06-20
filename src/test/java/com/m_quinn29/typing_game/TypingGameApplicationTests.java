@@ -1,4 +1,4 @@
-package com.m_quinn20.typing_game;
+package com.m_quinn29.typing_game;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
