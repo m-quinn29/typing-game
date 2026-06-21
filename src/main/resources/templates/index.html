@@ -44,14 +44,93 @@
 <body>
 
 <div class="game-container">
-    <div class="prompt-text" th:text="${promptVariable}">
+    <div class="prompt-text" id="prompt-text" th:text="${promptVariable}">
         placeholder text
     </div>
 
     <label>
-        <input type="text" class="type-input" placeholder="Start typing here..." autocomplete="off">
+        <input type="text" class="type-input" id="input-field" placeholder="Start typing here..." autocomplete="off">
     </label>
 </div>
+
+<script>
+    const textElement = document.getElementById('prompt-text')
+    const inputElement = document.getElementById('input-field')
+
+    const textWords = textElement.innerHTML.split(" ");
+
+    textElement.innerHTML = "<span>" + textElement.innerHTML.split("").join("</span><span>") + "</span>"
+    const charSpans = textElement.querySelectorAll('span');
+
+    let charIndex = 0;
+    let prevWordCharIndex = 0;
+    let wordIndex = 0;
+    let highestCharIndex = 0;
+
+    function handleInput() {
+        inputElement.placeholder = "";
+
+        const typedText = inputElement.value;
+        let correctSoFar = true;
+        let promptFinished = false;
+
+        let lastInputCharIndex = prevWordCharIndex + typedText.length;
+
+        if (lastInputCharIndex > charSpans.length){
+            lastInputCharIndex = charSpans.length;
+        }
+
+
+        if (highestCharIndex > lastInputCharIndex){
+            for (let i = lastInputCharIndex; i <= highestCharIndex; i++){
+                charSpans[i].style.color = "#333";
+            }
+        }
+
+        highestCharIndex = Math.min(lastInputCharIndex, charSpans.length-1);
+
+        for (let i = 0; i < typedText.length; i++){
+            let targetIndex = prevWordCharIndex + i
+
+            if (targetIndex >= charSpans.length){
+                break;
+            }
+            else if (correctSoFar == false){
+                charSpans[targetIndex].style.color = "red";
+            }
+            else if (charSpans[targetIndex].innerText == typedText.charAt(i) && correctSoFar){
+                charSpans[targetIndex].style.color = "green";
+
+                if (targetIndex >= charSpans.length-1){
+                    promptFinished = true;
+                    break;
+                    }
+
+                if (typedText.charAt(i) == " "){
+                    prevWordCharIndex = targetIndex + 1;
+                    inputElement.value = "";
+                }
+            }
+            else {
+                correctSoFar = false;
+                charSpans[targetIndex].style.color = "red";
+            }
+        }
+
+        if (promptFinished){
+            inputElement.value = "";
+            inputElement.disabled = true;
+        }
+
+
+    }
+
+    inputElement.addEventListener('input', handleInput);
+
+
+
+
+</script>
 
 </body>
 </html>

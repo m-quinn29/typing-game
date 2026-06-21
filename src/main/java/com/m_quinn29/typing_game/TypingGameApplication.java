@@ -33,7 +33,7 @@ public class TypingGameApplication {
 			}
 
 			repository.save(new TextPrompt("Book1", "John", "Once upon a time in Hollywood..."));
-			repository.save(new TextPrompt("Java101",  "Ryan", "This is how to use java.. "));
+			repository.save(new TextPrompt("Java101",  "Ryan", "This is how to use java.."));
 			repository.save(new TextPrompt("Cooking101", "Bob", "A cookie is.."));
 
 			logger.info("Texts found with findAll():");
