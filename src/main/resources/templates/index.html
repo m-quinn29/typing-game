@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Typing Game</title>
     <style>
-        /* CSS to center everything perfectly in the middle of the screen */
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f2f5;
@@ -16,7 +15,7 @@
         }
 
         .game-container {
-            text-align: center;
+            text-align: left;
             background: white;
             padding: 40px;
             border-radius: 10px;
@@ -44,6 +43,17 @@
 <body>
 
 <div class="game-container">
+
+    <div class="time-selector">
+        <button class="time-button" type="button" onClick="setTimeMode(15)">15s</button>
+        <button class="time-button" type="button" onClick="setTimeMode(30)">30s</button>
+        <button class="time-button" type="button" onClick="setTimeMode(60)">60s</button>
+    </div>
+
+    <div
+        class="timer-display" id="timer">
+    </div>
+
     <div class="prompt-text" id="prompt-text" th:text="${promptVariable}">
         placeholder text
     </div>
@@ -63,16 +73,55 @@
     const charSpans = textElement.querySelectorAll('span');
 
     let charIndex = 0;
-    let prevWordCharIndex = 0;
-    let wordIndex = 0;
+    let correctSoFar = true;
+    let lastCorrectCharIndex = 0;
     let highestCharIndex = 0;
 
+    let prevWordCharIndex = 0;
+
+    let timerStarted = false;
+    let startTime = 30;
+    let time = startTime;
+    let wpm;
+    let timer;
+
+
+
+    function startTimer(){
+        timer = setInterval(myTimer, 1000);
+    }
+
+    function setTimeMode(selectedTime){
+        if (!timerStarted){
+            startTime = selectedTime;
+            time = selectedTime;
+            document.getElementById("timer").innerText = time + "s";
+        }
+    }
+
+    function myTimer(){
+        time--;
+        document.getElementById("timer").innerText = time + "s";
+        if (time <= 0){
+            outOfTime();
+        }
+    }
+
     function handleInput() {
+        if (!timerStarted) {
+            startTimer();
+            timerStarted = true;
+        }
+
+        if (time <= 0) {
+            outOfTime();
+            return;
+        }
+
         inputElement.placeholder = "";
 
         const typedText = inputElement.value;
         let correctSoFar = true;
-        let promptFinished = false;
 
         let lastInputCharIndex = prevWordCharIndex + typedText.length;
 
@@ -101,11 +150,6 @@
             else if (charSpans[targetIndex].innerText == typedText.charAt(i) && correctSoFar){
                 charSpans[targetIndex].style.color = "green";
 
-                if (targetIndex >= charSpans.length-1){
-                    promptFinished = true;
-                    break;
-                    }
-
                 if (typedText.charAt(i) == " "){
                     prevWordCharIndex = targetIndex + 1;
                     inputElement.value = "";
@@ -116,19 +160,25 @@
                 charSpans[targetIndex].style.color = "red";
             }
         }
-
-        if (promptFinished){
-            inputElement.value = "";
-            inputElement.disabled = true;
-        }
-
-
     }
 
-    inputElement.addEventListener('input', handleInput);
+    function outOfTime(){
+        clearInterval(timer);
+        inputElement.disabled = true;
+        calculateWPM();
+        document.getElementById("timer").innerText = "WPM: " + wpm;
+    }
 
+    function calculateWPM(){
+        let correctCharCount = 0;
+        charSpans.forEach(span => {
+            if (span.style.color == "green") correctCharCount ++;
+        });
 
+        wpm = Math.round((correctCharCount / 5) * (60 / startTime));
+    }
 
+    inputElement.addEventListener("input", handleInput);
 
 </script>
 

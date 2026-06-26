@@ -1,9 +1,6 @@
 package com.m_quinn29.typing_game.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class TextPrompt {
@@ -13,18 +10,21 @@ public class TextPrompt {
     private Long id;
     private String title;
     private String author;
+    @Column(length = 1000)
     private String text;
     private int wordCount;
     private String textSize; // "short", "medium", "long"
+    private String media;
 
 
     // Constructor exists only for the sake off JPA
     protected TextPrompt() {}
 
-    public TextPrompt(String title, String author, String text){
+    public TextPrompt(String title, String author, String text, String media){
         this.title = title;
         this.author = author;
         this.text = text;
+        this.media = media;
         this.wordCount = calculateWordCount();
         this.textSize = calculateTextSize();
     }
@@ -69,5 +69,9 @@ public class TextPrompt {
 
     public String getTextSize() {
         return textSize;
+    }
+
+    public String getMedia() {
+        return media;
     }
 }
