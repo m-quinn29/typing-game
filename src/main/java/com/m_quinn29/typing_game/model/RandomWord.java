@@ -3,7 +3,7 @@ package com.m_quinn29.typing_game.model;
 import jakarta.persistence.*;
 
 @Entity
-public class WordPrompt {
+public class RandomWord {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -11,9 +11,9 @@ public class WordPrompt {
     private String word;
     private int length;
 
-    protected WordPrompt() {}
+    protected RandomWord() {}
 
-    public WordPrompt(String word, int length) {
+    public RandomWord(String word, int length) {
         this.word = word;
         this.length = length;
     }
