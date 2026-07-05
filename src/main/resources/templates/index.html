@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Typing Game</title>
@@ -16,19 +16,23 @@
 
         .game-container {
             text-align: left;
-            background: white;
+            background: #ffffff;
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            max-width: 600px;
+            max-width: 800px;
             width: 100%;
         }
 
         .prompt-text {
-            font-size: 24px;
+            font-size: 30px;
+            line-height: 40px;
+            height: 120px;
             font-weight: bold;
             color: #333;
             margin-bottom: 20px;
+
+            overflow: hidden;
         }
 
         .type-input {
@@ -44,15 +48,15 @@
 
 <div class="game-container">
 
-    <div class="mode-selector">
-        <button class="mode-button" type="button" onClick="setGameMode('quote')">Quote</button>
-        <button class="mode-button" type="button" onClick="setGameMode('word')">Words</button>
+    <div class="mode-selector-container">
+        <button data-mode="quote" type="button" >Quote</button>
+        <button data-mode="word" type="button" >Words</button>
     </div>
 
-    <div class="time-selector" id="time-selectors" style="display: none;">
-        <button class="time-button" type="button" onClick="setTimeMode(15)">15s</button>
-        <button class="time-button" type="button" onClick="setTimeMode(30)">30s</button>
-        <button class="time-button" type="button" onClick="setTimeMode(60)">60s</button>
+    <div class="time-selector-container" id="time-selectors" style="display: none;">
+        <button data-time="15" type="button" >15s</button>
+        <button data-time="30" type="button" >30s</button>
+        <button data-time="60" type="button" >60s</button>
     </div>
 
     <div
@@ -68,204 +72,11 @@
     </label>
 
     <div>
-        <button class="next-button" type="button" onClick="newText()">New Text</button>
+        <button class="next-button" id="next-button" type="button">New Text</button>
     </div>
 </div>
 
-<script>
-
-    let gameMode = "quote"
-
-    const textElement = document.getElementById('prompt-text');
-    const inputElement = document.getElementById('input-field');
-    const timerElement = document.getElementById("timer");
-
-    let textWords = textElement.innerHTML.split(" ");
-    textElement.innerHTML = "<span>" + textElement.innerHTML.split("").join("</span><span>") + "</span>";
-    let charSpans = textElement.querySelectorAll('span');
-
-    let charIndex = 0;
-    let correctSoFar = true;
-    let lastCorrectCharIndex = 0;
-    let highestCharIndex = 0;
-
-    let prevWordCharIndex = 0;
-
-    let timerStarted = false;
-    let startTime = 0;
-    let selectedStartTime = 15;
-    let time = startTime;
-    let wpm;
-    let timer;
-
-    let quoteFinished = false;
-
-
-
-    function startTimer(){
-        timer = setInterval(wordTimer, 1000);
-    }
-
-    function setTimeMode(selectedTime){
-        if (!timerStarted){
-            startTime = selectedTime;
-            selectedStartTime = selectedTime;
-            time = selectedTime;
-            timerElement.innerText = time + "s";
-        }
-    }
-
-    function wordTimer(){
-        if (gameMode === "word"){
-            time--;
-            if (time <= 0){
-                gameOver();
-                return;
-            }
-        }
-        else if (gameMode === "quote"){
-            time++;
-        }
-        document.getElementById("timer").innerText = time + "s";
-    }
-
-    function handleInput() {
-        if (!timerStarted) {
-            startTimer();
-            timerStarted = true;
-        }
-
-        if (time <= 0 && gameMode === "word") {
-            gameOver();
-            return;
-        }
-
-        if (quoteFinished){
-            gameOver();
-            return;
-        }
-
-        timerElement.style.display = "block";
-        inputElement.placeholder = "";
-
-        const typedText = inputElement.value;
-        let correctSoFar = true;
-
-        let lastInputCharIndex = prevWordCharIndex + typedText.length;
-
-        if (lastInputCharIndex > charSpans.length){
-            lastInputCharIndex = charSpans.length;
-        }
-
-
-        if (highestCharIndex > lastInputCharIndex){
-            for (let i = lastInputCharIndex; i <= highestCharIndex; i++){
-                charSpans[i].style.color = "#333";
-            }
-        }
-
-        highestCharIndex = Math.min(lastInputCharIndex, charSpans.length-1);
-
-        for (let i = 0; i < typedText.length; i++){
-            let targetIndex = prevWordCharIndex + i
-
-            if (targetIndex === (charSpans.length-1) && correctSoFar){
-                charSpans[targetIndex].style.color = "green";
-                gameOver();
-                return;
-            }
-
-            if (targetIndex >= charSpans.length){
-                break;
-            }
-
-            else if (correctSoFar == false){
-                charSpans[targetIndex].style.color = "red";
-            }
-            else if (charSpans[targetIndex].innerText == typedText.charAt(i) && correctSoFar){
-                charSpans[targetIndex].style.color = "green";
-
-                if (typedText.charAt(i) == " "){
-                    prevWordCharIndex = targetIndex + 1;
-                    inputElement.value = "";
-                }
-            }
-            else {
-                correctSoFar = false;
-                charSpans[targetIndex].style.color = "red";
-            }
-        }
-    }
-
-    function gameOver(){
-        calculateWPM();
-        clearInterval(timer);
-        inputElement.disabled = true;
-        document.getElementById("timer").innerText = "WPM: " + wpm;
-    }
-
-    function calculateWPM(){
-        let correctCharCount = 0;
-        charSpans.forEach(span => {
-            if (span.style.color == "green") correctCharCount ++;
-        });
-
-        let textLength = startTime;
-        if (gameMode === "quote"){
-            textLength = time;
-        }
-
-        wpm = Math.round((correctCharCount / 5) * (60 / textLength));
-    }
-
-    function newText(){
-        fetch(`/next-prompt?gameMode=${gameMode}`).then(response => response.text()).then(text => {
-            textElement.innerText = text;
-
-            textWords = textElement.innerHTML.split(" ");
-            textElement.innerHTML = "<span>" + textElement.innerHTML.split("").join("</span><span>") + "</span>";
-            charSpans = textElement.querySelectorAll('span');
-            prevWordCharIndex = 0;
-            highestCharIndex = 0;
-
-            resetTimeAndWPM();
-            inputElement.disabled = false;
-        })
-    }
-
-    function resetTimeAndWPM(){
-        inputElement.value = "";
-        clearInterval(timer);
-        timerStarted = false;
-        time = startTime;
-        timerElement.innerText = startTime + "s";
-    }
-
-    function setGameMode(mode){
-        if (mode === gameMode){
-            return;
-        }
-
-        const timeSelectorsDiv = document.getElementById('time-selectors');
-
-        if (mode === "quote"){
-            timeSelectorsDiv.style.display = 'none';
-            timerElement.style.display = 'none';
-            startTime = 0;
-        }
-        else if (mode === "word"){
-            timeSelectorsDiv.style.display = 'block';
-            timerElement.style.display = 'block';
-            startTime = selectedStartTime;
-        }
-        gameMode = mode;
-        newText();
-    }
-
-
-    inputElement.addEventListener("input", handleInput);
-
-</script>
+<script th:src="@{/js/typing-game.js}"></script>
 
 </body>
 </html>
