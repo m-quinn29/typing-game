@@ -15,7 +15,10 @@ export class TypingEngine {
 
             highestCharIndex: 0,
             prevWordCharIndex: 0,
-            prevOffsetTop: 0
+            prevOffsetTop: 0,
+
+            scrollTotal: 0,
+            firstLine: true
         };
 
         this.prompt = {
@@ -32,6 +35,8 @@ export class TypingEngine {
             this.DOM.promptElement.innerText = text;
             this.state.prevWordCharIndex = 0;
             this.state.highestCharIndex = 0;
+            this.state.scrollTotal = 0;
+            this.state.firstLine = true;
 
             this.#resetTimeAndWPM();
             this.DOM.inputElement.disabled = false;
@@ -40,6 +45,7 @@ export class TypingEngine {
             this.DOM.promptElement.innerHTML = "<span>" + this.DOM.promptElement.innerHTML.split("").join("</span><span>") + "</span>";
             this.prompt.charSpans = this.DOM.promptElement.querySelectorAll('span');
 
+            this.DOM.promptElement.scrollTop = 0;
             this.DOM.inputElement.addEventListener("input", this.handleInput);
         })
     }
@@ -111,6 +117,8 @@ export class TypingEngine {
                 if (typedText.charAt(i) === " "){
                     this.state.prevWordCharIndex = targetIndex + 1;
                     this.DOM.inputElement.value = "";
+
+                    this.#checkNewLine();
                 }
             }
             else {
@@ -169,9 +177,24 @@ export class TypingEngine {
 
     //TODO
     #checkNewLine(){
-        if (this.state.prevWordCharIndex.offsetTop > this.state.prevOffsetTop){
-            this.state.prevOffsetTop = this.state.prevWordCharIndex.offsetTop;
+        const currentSpan = this.prompt.charSpans[this.state.prevWordCharIndex];
+        const prevSpan = this.prompt.charSpans[this.state.prevWordCharIndex-2];
+
+        if (currentSpan.offsetTop > prevSpan.offsetTop) {
+            if (this.state.firstLine) {
+                this.state.firstLine = false;
+                return;
+            }
+
+            this.state.scrollTotal += 40;
+            this.DOM.promptElement.scrollTop = this.state.scrollTotal;
 
         }
     }
+
+    //TODO
+    #destroyPrevLineCharSpans() {
+
+    }
+
 }
