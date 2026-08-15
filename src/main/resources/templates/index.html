@@ -14,7 +14,26 @@
             margin: 0;
         }
 
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 150px;
+            width: 1000px;
+            max-height: 1000px;
+        }
+        .navigation-bar {
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
         .game-container {
+            align-self: center;
             text-align: left;
             background: #ffffff;
             padding: 40px;
@@ -22,6 +41,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             max-width: 800px;
             width: 100%;
+            box-sizing: border-box;
         }
 
         .prompt-text {
@@ -45,38 +65,45 @@
     </style>
 </head>
 <body>
+<div class="main">
+    <div class="navigation-bar">
+        <div class="navigation-button-container">
+            <button data-mode="practice" type="button" >Practice</button>
+            <button data-mode="versus" type="button" >Versus</button>
+        </div>
 
-<div class="game-container">
-
-    <div class="mode-selector-container">
-        <button data-mode="quote" type="button" >Quote</button>
-        <button data-mode="word" type="button" >Words</button>
     </div>
 
-    <div class="time-selector-container" id="time-selectors" style="display: none;">
-        <button data-time="15" type="button" >15s</button>
-        <button data-time="30" type="button" >30s</button>
-        <button data-time="60" type="button" >60s</button>
-    </div>
+    <div class="game-container">
+        <div class="mode-selector-container">
+            <button data-mode="quote" type="button" >Quote</button>
+            <button data-mode="word" type="button" >Words</button>
+        </div>
 
-    <div
-        class="timer-display" id="timer" style="display: none">
-    </div>
+        <div class="time-selector-container" id="time-selectors" style="display: none;">
+            <button data-time="15" type="button" >15s</button>
+            <button data-time="30" type="button" >30s</button>
+            <button data-time="60" type="button" >60s</button>
+        </div>
 
-    <div class="prompt-text" id="prompt-text" th:text="${promptVariable}">
-        placeholder text
-    </div>
+        <div
+            class="timer-display" id="timer" style="display: none">
+        </div>
 
-    <label>
-        <input type="text" class="type-input" id="input-field" placeholder="Start typing here..." autocomplete="off">
-    </label>
+        <div class="prompt-text" id="prompt-text" th:text="${promptVariable}">
+            placeholder text
+        </div>
 
-    <div>
-        <button class="next-button" id="next-button" type="button">New Text</button>
+        <label>
+            <input type="text" class="type-input" id="input-field" placeholder="Start typing here..." autocomplete="off">
+        </label>
+
+        <div>
+            <button class="next-button" id="next-button" type="button">New Text</button>
+        </div>
     </div>
 </div>
-
-<script th:src="@{/js/typing-game.js}"></script>
+<script type="module" th:src="@{/js/modules/practice-mode.js}"></script>
 
 </body>
 </html>

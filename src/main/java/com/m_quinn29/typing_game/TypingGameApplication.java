@@ -47,9 +47,6 @@ public class TypingGameApplication {
 	}
 
 	private void addQuotesToRepository(TextPromptRepository textPromptRepository){
-		textPromptRepository.save(new TextPrompt("Book1", "John", "Once upon a time in Hollywood...", "other"));
-		textPromptRepository.save(new TextPrompt("Java101",  "Ryan", "This is how to use java..", "other"));
-		textPromptRepository.save(new TextPrompt("Cooking101", "Bob", "A cookie is..", "other"));
 		textPromptRepository.save(new TextPrompt("A Separate Peace", "John Knowles", "Sometimes you are too ashamed to leave. That was true now. And sometimes you need too much to know the facts, and so humbly and stupidly you stay.", "Book"));
 		textPromptRepository.save(new TextPrompt("Change Your Brain", "Daniel G. Amen", "Language is one of the keys to being human. It allows us to communicate with other human beings and to leave a legacy of our thoughts and actions for future generations. The dominant temporal lobe helps to process sounds and written words into meaningful information.", "Book"));
 		textPromptRepository.save(new TextPrompt("Gulliver's Travels", "Jonathan Swift", "They look upon fraud as a greater crime than theft, and therefore seldom fail to punish it with death.", "Book"));
