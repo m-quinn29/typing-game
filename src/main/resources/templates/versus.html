@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Versus</title>
+    <style>
+
+        button {
+            background-color: #c5bb8d;
+            color: #f2efe6;
+        }
+
+        .navigation-bar {
+            position: absolute;
+            top: 20%;
+            background: #dbd4bf;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 800px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 1000px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ece6d3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .game-container {
+            position: relative;
+            background: #fbf4e1;
+            padding: 40px 80px;
+            border-radius: 5px;
+            max-width: 800px;
+            width: 100%;
+            height: 500px;
+            box-sizing: border-box;
+        }
+
+        .game-state {
+            display: none;
+        }
+
+        .game-state.active {
+            display: block;
+        }
+
+        .game-state.join-buttons {
+            width: 150px;
+            height: 60px;
+            margin-top: 10px;
+        }
+
+        .join-race button {
+            background-color: #268ad0;
+            color: #ece6d3;
+            width: 100%;
+            height: 100%;
+        }
+
+
+
+
+    </style>
+</head>
+<body>
+<div class="main">
+    <div th:replace="fragments/navigationBar :: navigationBar"></div>
+
+    <div class="game-container">
+
+        <div class="game-state join-buttons active">
+            <div class="join-race"> <button data-type="quote" type="button" >Join Quote Race</button> </div>
+            <div class="join-race"> <button data-type="word" type="button" >Join Words Race</button> </div>
+        </div>
+
+        <div class="game-state waiting-for-race">
+            <div class="searching-for-race-text">
+                Searching for race
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+</div>
+
+<script type="module" th:src="@{/js/modules/navigation.js}"></script>
+<script type="module" th:src="@{/js/modules/versus-mode.js}"></script>
+</body>
+</html>

@@ -4,9 +4,15 @@
     <meta charset="UTF-8">
     <title>Typing Game</title>
     <style>
+
+        button {
+            background-color: #c5bb8d;
+            color: #f2efe6;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
+            background-color: #ece6d3;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -14,33 +20,31 @@
             margin: 0;
         }
 
-        .main {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 150px;
-            width: 1000px;
-            max-height: 1000px;
-        }
         .navigation-bar {
-            background: #ffffff;
+            position: absolute;
+            top: 20%;
+            background: #dbd4bf;
             padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 5px;
             max-width: 800px;
             width: 100%;
             box-sizing: border-box;
         }
 
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 1000px;
+        }
+
         .game-container {
-            align-self: center;
-            text-align: left;
-            background: #ffffff;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: #fbf4e1;
+            padding: 100px 40px;
+            border-radius: 5px;
             max-width: 800px;
             width: 100%;
+            height: 500px;
             box-sizing: border-box;
         }
 
@@ -49,11 +53,16 @@
             line-height: 40px;
             height: 120px;
             font-weight: bold;
-            color: #333;
+            color: #576d74;
             margin-bottom: 20px;
 
             scroll-behavior: smooth;
             overflow: hidden;
+        }
+
+        .incorrect-space {
+            /*background-color: #c94a16;*/
+            text-decoration: underline;
         }
 
         .prompt-text span {
@@ -64,20 +73,29 @@
             width: 80%;
             padding: 10px;
             font-size: 16px;
-            border: 2px solid #ccc;
+            border: 2px solid #574b27;
             border-radius: 5px;
+            color: #647a82;
         }
+
+        .mode-selector-container {
+            margin-right: 10px;
+        }
+
+        .time-selector-container {
+            margin-top: 10px;
+        }
+
+        .next-button {
+            margin-top: 10px;
+        }
+
     </style>
 </head>
 <body>
 <div class="main">
-    <div class="navigation-bar">
-        <div class="navigation-button-container">
-            <button data-mode="practice" type="button" >Practice</button>
-            <button data-mode="versus" type="button" >Versus</button>
-        </div>
 
-    </div>
+    <div th:replace="fragments/navigationBar :: navigationBar"></div>
 
     <div class="game-container">
         <div class="mode-selector-container">
@@ -109,6 +127,7 @@
     </div>
 </div>
 <script type="module" th:src="@{/js/modules/practice-mode.js}"></script>
+<script type="module" th:src="@{/js/modules/navigation.js}"></script>
 
 </body>
 </html>

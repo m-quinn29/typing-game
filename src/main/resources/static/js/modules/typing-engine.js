@@ -1,5 +1,13 @@
 export class TypingEngine {
 
+    static #gameType = 'practice';
+    static #raceType = 'quote'
+
+    correctGreen = '#849800'
+    wrongRed = '#c94a16';
+    defaultGrey = '#576d74'
+
+
     constructor(DOM) {
         this.DOM = DOM;
 
@@ -74,47 +82,55 @@ export class TypingEngine {
 
     #checkInputAndGiveFeedback(){
         const typedText = this.DOM.inputElement.value;
+        const promptSpans = this.prompt.charSpans
 
         let correctSoFar = true;
         let lastInputCharIndex = this.state.prevWordCharIndex + typedText.length;
 
         if (this.state.prevOffsetTop === 0){
-            this.state.prevOffsetTop = this.prompt.charSpans[this.state.prevWordCharIndex].offsetTop;
+            this.state.prevOffsetTop = promptSpans[this.state.prevWordCharIndex].offsetTop;
         }
 
-        if (lastInputCharIndex > this.prompt.charSpans.length){
-            lastInputCharIndex = this.prompt.charSpans.length;
+        if (lastInputCharIndex > promptSpans.length){
+            lastInputCharIndex = promptSpans.length;
         }
 
 
         if (this.state.highestCharIndex > lastInputCharIndex){
             for (let i = lastInputCharIndex; i <= this.state.highestCharIndex; i++){
-                this.prompt.charSpans[i].style.color = "#333";
+                promptSpans[i].style.color = this.defaultGrey;
+                promptSpans[i].classList.remove('incorrect-space');
             }
         }
 
-        this.state.highestCharIndex = Math.min(lastInputCharIndex, this.prompt.charSpans.length-1);
+        this.state.highestCharIndex = Math.min(lastInputCharIndex, promptSpans.length-1);
 
         for (let i = 0; i < typedText.length; i++){
             let targetIndex = this.state.prevWordCharIndex + i
 
-            if (targetIndex === (this.prompt.charSpans.length-1) && correctSoFar){
-                this.prompt.charSpans[targetIndex].style.color = "green";
+            if (targetIndex === (promptSpans.length-1) && correctSoFar){
+                promptSpans[targetIndex].style.color = this.correctGreen;
                 this.#gameOver();
                 return;
             }
 
-            if (targetIndex >= this.prompt.charSpans.length){
+            if (targetIndex >= promptSpans.length){
                 break;
             }
 
             else if (correctSoFar === false){
-                this.prompt.charSpans[targetIndex].style.color = "red";
+                promptSpans[targetIndex].style.color = this.wrongRed;
+                if (promptSpans[targetIndex].innerText === ' ') {
+                    promptSpans[targetIndex].classList.add('incorrect-space');
+                }
+
             }
-            else if (this.prompt.charSpans[targetIndex].innerText === typedText.charAt(i) && correctSoFar){
-                this.prompt.charSpans[targetIndex].style.color = "green";
+            else if (promptSpans[targetIndex].innerText === typedText.charAt(i) && correctSoFar){
+                promptSpans[targetIndex].style.color = this.correctGreen;
 
                 if (typedText.charAt(i) === " "){
+                    promptSpans[targetIndex].classList.remove('incorrect-space');
+
                     this.state.prevWordCharIndex = targetIndex + 1;
                     this.DOM.inputElement.value = "";
 
@@ -123,7 +139,10 @@ export class TypingEngine {
             }
             else {
                 correctSoFar = false;
-                this.prompt.charSpans[targetIndex].style.color = "red";
+                promptSpans[targetIndex].style.color = this.wrongRed;
+                if (promptSpans[targetIndex].innerText === ' ') {
+                    promptSpans[targetIndex].classList.add('incorrect-space');
+                }
             }
         }
     }
@@ -161,10 +180,11 @@ export class TypingEngine {
         this.DOM.timerElement.innerText = "WPM: " + this.state.wpm;
     }
 
+    // TODO Implement better way to calculate correct chars, not compare to hard coded colour
     #calculateWPM(){
         let correctCharCount = 0;
         this.prompt.charSpans.forEach(span => {
-            if (span.style.color === "green") correctCharCount ++;
+            if (span.style.color === 'rgb(132, 152, 0)') correctCharCount ++;
         });
 
         let textLength = this.state.startTime;
@@ -190,6 +210,22 @@ export class TypingEngine {
             this.DOM.promptElement.scrollTop = this.state.scrollTotal;
 
         }
+    }
+
+    static get gameType() {
+        return this.#gameType;
+    }
+
+    static set gameType(type) {
+        this.#gameType = 'type'
+    }
+
+    static get raceType() {
+        return this.#raceType;
+    }
+
+    static set raceType(type) {
+        this.#raceType = 'type';
     }
 
     //TODO
