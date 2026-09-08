@@ -11,7 +11,9 @@ public class RandomWord {
     private String word;
     private int length;
 
-    protected RandomWord() {}
+    protected RandomWord() {
+
+    }
 
     public RandomWord(String word, int length) {
         this.word = word;
