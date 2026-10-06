@@ -1,24 +1,52 @@
 package com.m_quinn29.typing_game.service;
 
-import com.m_quinn29.typing_game.model.Player;
-import com.m_quinn29.typing_game.model.Race;
-import com.m_quinn29.typing_game.model.RaceProgressMessage;
-import com.m_quinn29.typing_game.model.RaceState;
+import com.m_quinn29.typing_game.model.*;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class RaceService {
 
     private final Map<String, Race> races = new HashMap<>();
+    private final Map<String, String> openRaces = new HashMap<>();
 
-    public String createRace() {
+    private final MainService mainService;
+
+    public RaceService (MainService mainService) {
+        this.mainService = mainService;
+
+        openRaces.put("quote", null);
+        openRaces.put("word", null);
+    }
+
+    public String createRace(String raceType) {
         String raceId = UUID.randomUUID().toString();
-        races.put(raceId, new Race(raceId));
+        String prompt;
+
+        if (raceType.equals("quote")) {
+            prompt = mainService.getRandomPrompt().getText();
+        }
+        else if (raceType.equals("word")){
+            prompt = mainService.getNextRandomWordSet();
+        } else {
+            throw new IllegalArgumentException("Invalid race type: " + raceType);
+        }
+
+        // TODO: Creates a race with the prompt text but should also send back TextPrompt's author, title etc
+        races.put(raceId, new Race(raceId, prompt));
         return raceId;
+    }
+
+    public String findRace(String raceType) {
+        String openRace = openRaces.get(raceType);
+        if (openRace == null) {
+            String raceId = createRace(raceType);
+            openRaces.put(raceType, raceId);
+            return raceId;
+        }
+
+        return openRace;
     }
 
     public Race getRace(String raceId) {
@@ -26,7 +54,7 @@ public class RaceService {
     }
 
     public RaceState updateRaceProgress(String raceId, RaceProgressMessage message) {
-        String playerId = message.getPlayerId();
+         String playerId = message.getPlayerId();
 
          Race race = races.get(raceId);
          Player player = race.getPlayer(playerId);

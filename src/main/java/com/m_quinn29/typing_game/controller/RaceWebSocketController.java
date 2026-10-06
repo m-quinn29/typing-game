@@ -14,7 +14,6 @@ public class RaceWebSocketController {
     private final RaceService raceService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    // TODO: Configure Sockets - Springboot documentation
     public RaceWebSocketController(RaceService raceService, SimpMessagingTemplate messagingTemplate) {
         this.raceService = raceService;
         this.messagingTemplate = messagingTemplate;
@@ -25,7 +24,7 @@ public class RaceWebSocketController {
     public void progress(@DestinationVariable String raceId, RaceProgressMessage progressMessage) {
         RaceState raceState = raceService.updateRaceProgress(raceId, progressMessage);
 
-        messagingTemplate.convertAndSend("/topic/race/" + raceId + raceState);
+        messagingTemplate.convertAndSend("/topic/race/" + raceId, raceState);
     }
 }
 

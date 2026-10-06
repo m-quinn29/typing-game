@@ -1,7 +1,8 @@
 export class TypingEngine {
 
-    static #gameType = 'practice';
-    static #raceType = 'quote'
+    #gameType = 'practice';
+    #raceType = 'quote'
+    #raceId = null;
 
     correctGreen = '#849800'
     wrongRed = '#c94a16';
@@ -12,7 +13,6 @@ export class TypingEngine {
         this.DOM = DOM;
 
         this.state = {
-            gameMode: "quote",
             timerStarted: false,
             startTime: 0,
             time: 0,
@@ -39,23 +39,11 @@ export class TypingEngine {
     }
 
     newText(){
-        fetch(`/next-prompt?gameMode=${this.state.gameMode}`).then(response => response.text()).then(text => {
-            this.DOM.promptElement.innerText = text;
-            this.state.prevWordCharIndex = 0;
-            this.state.highestCharIndex = 0;
-            this.state.scrollTotal = 0;
-            this.state.firstLine = true;
+        fetch(`/next-prompt?gameMode=${this.#raceType}`).then(response => response.text()).then(text => this.#newTextInit(text));
+    }
 
-            this.#resetTimeAndWPM();
-            this.DOM.inputElement.disabled = false;
-
-            this.prompt.textWords = this.DOM.promptElement.innerHTML.split(" ");
-            this.DOM.promptElement.innerHTML = "<span>" + this.DOM.promptElement.innerHTML.split("").join("</span><span>") + "</span>";
-            this.prompt.charSpans = this.DOM.promptElement.querySelectorAll('span');
-
-            this.DOM.promptElement.scrollTop = 0;
-            this.DOM.inputElement.addEventListener("input", this.handleInput);
-        })
+    newRaceText() {
+        fetch(`/next-race-prompt?raceId=${this.#raceId}`).then(response => response.text()).then(text => this.#newTextInit(text));
     }
 
     handleInput() {
@@ -64,7 +52,7 @@ export class TypingEngine {
             this.state.timerStarted = true;
         }
 
-        if (this.state.time <= 0 && this.state.gameMode === "word") {
+        if (this.state.time <= 0 && this.#raceType === "word") {
             this.#gameOver();
             return;
         }
@@ -78,6 +66,24 @@ export class TypingEngine {
         this.DOM.inputElement.placeholder = "";
 
         this.#checkInputAndGiveFeedback();
+    }
+
+    #newTextInit(text) {
+        this.DOM.promptElement.innerText = text;
+        this.state.prevWordCharIndex = 0;
+        this.state.highestCharIndex = 0;
+        this.state.scrollTotal = 0;
+        this.state.firstLine = true;
+
+        this.#resetTimeAndWPM();
+        this.DOM.inputElement.disabled = false;
+
+        this.prompt.textWords = this.DOM.promptElement.innerHTML.split(" ");
+        this.DOM.promptElement.innerHTML = "<span>" + this.DOM.promptElement.innerHTML.split("").join("</span><span>") + "</span>";
+        this.prompt.charSpans = this.DOM.promptElement.querySelectorAll('span');
+
+        this.DOM.promptElement.scrollTop = 0;
+        this.DOM.inputElement.addEventListener("input", this.handleInput);
     }
 
     #checkInputAndGiveFeedback(){
@@ -212,20 +218,28 @@ export class TypingEngine {
         }
     }
 
-    static get gameType() {
+    get gameType() {
         return this.#gameType;
     }
 
-    static set gameType(type) {
-        this.#gameType = 'type'
+    set gameType(type) {
+        this.#gameType = type;
     }
 
-    static get raceType() {
+    get raceType() {
         return this.#raceType;
     }
 
-    static set raceType(type) {
-        this.#raceType = 'type';
+    set raceType(type) {
+        this.#raceType = type;
+    }
+
+    get raceId() {
+        return this.#raceId;
+    }
+
+    set raceId(raceId) {
+        this.#raceId = raceId;
     }
 
     //TODO

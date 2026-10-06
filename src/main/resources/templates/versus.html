@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Versus</title>
@@ -57,7 +57,34 @@
             display: block;
         }
 
-        .game-state.join-buttons {
+        .prompt-text {
+            font-size: 30px;
+            line-height: 40px;
+            height: 120px;
+            font-weight: bold;
+            color: #576d74;
+            margin-bottom: 20px;
+
+            scroll-behavior: smooth;
+            overflow: hidden;
+        }
+
+        .type-input {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #574b27;
+            border-radius: 5px;
+            color: #647a82;
+        }
+
+        .join-buttons {
+            width: 300px;
+            /*height: 60px;*/
+            /*margin-top: 10px;*/
+        }
+
+        .join-race {
             width: 150px;
             height: 60px;
             margin-top: 10px;
@@ -92,6 +119,23 @@
             </div>
         </div>
 
+        <div class="game-state race" >
+
+            <div
+                class="timer-display" id="timer">
+            </div>
+
+            <div class="prompt-text" id="prompt-text" th:text="${promptVariable}">
+                placeholder text
+            </div>
+
+            <label>
+                <input type="text" class="type-input" id="input-field" placeholder="Start typing here..." autocomplete="off">
+            </label>
+
+
+        </div>
+
     </div>
 
 
@@ -99,7 +143,11 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.2.1/bundles/stomp.umd.min.js"></script>
 <script type="module" th:src="@{/js/modules/navigation.js}"></script>
 <script type="module" th:src="@{/js/modules/versus-mode.js}"></script>
+
+
 </body>
 </html>

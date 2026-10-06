@@ -1,6 +1,8 @@
 package com.m_quinn29.typing_game.model;
 
 
+import com.m_quinn29.typing_game.service.MainService;
+
 import java.util.List;
 import java.util.Map;
 
@@ -18,8 +20,9 @@ public class Race {
 
     }
 
-    public Race(String raceId) {
+    public Race(String raceId, String text) {
         this.raceId = raceId;
+        this.text = text;
     }
 
     public String getId() {
