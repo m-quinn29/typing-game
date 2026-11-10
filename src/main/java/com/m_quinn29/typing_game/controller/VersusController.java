@@ -1,12 +1,18 @@
 package com.m_quinn29.typing_game.controller;
 
+import com.m_quinn29.typing_game.model.MatchmakingResponse;
 import com.m_quinn29.typing_game.model.Race;
+import com.m_quinn29.typing_game.model.RaceState;
 import com.m_quinn29.typing_game.service.RaceService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * Controller class handling HTTP requests for versus mode
+ */
 @Controller
 public class VersusController {
     private final RaceService raceService;
@@ -20,10 +26,9 @@ public class VersusController {
         return "versus";
     }
 
-
     @GetMapping("/find-race")
     @ResponseBody
-    public String findRace(@RequestParam String raceType) {
+    public MatchmakingResponse findRace(@RequestParam String raceType) {
         return raceService.findRace(raceType);
     }
 
@@ -33,5 +38,4 @@ public class VersusController {
         Race race = raceService.getRace(raceId);
         return race.getText();
     }
-
 }

@@ -45,26 +45,36 @@ async function startRace(raceType) {
     showState('waiting-for-race');
 
     const response = await fetch(`/find-race?raceType=${raceType}`);
-    typingEngine.raceId = await response.text();
+    const matchResponse = await response.json();
+    typingEngine.raceId = matchResponse.raceId;
+    typingEngine.playerId = matchResponse.playerId;
 
     await socketReady;
 
-    setupRaceLobby();
+    await initRace();
 }
 
-function setupRaceLobby() {
+async function initRace() {
     console.log("Setting up race:", typingEngine.raceId);
 
-
-    stompClient.subscribe(`/topic/race/${typingEngine.raceId}`, message => {
+    await stompClient.subscribe(`/topic/race/${typingEngine.raceId}`, message => {
+        console.log("Subscribed");
         const raceState = JSON.parse(message.body);
+        console.log("Received RaceState update:", JSON.stringify(raceState, null, 2));
     });
 
-    // TODO: When subscribing return json with raceId, prompt, players
+    stompClient.publish({
+        destination: `/app/race/${typingEngine.raceId}/progress`,
+        body: JSON.stringify({
+            playerId: typingEngine.playerId,
+            charactersTyped: 0,
+            wpm: 0,
+            finished: false
+        })
+    });
+
     typingEngine.newRaceText();
     showState('race');
-
-
 }
 
 /**

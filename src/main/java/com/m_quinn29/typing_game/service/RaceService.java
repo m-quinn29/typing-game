@@ -11,6 +11,8 @@ public class RaceService {
     private final Map<String, Race> races = new HashMap<>();
     private final Map<String, String> openRaces = new HashMap<>();
 
+    private final Random random = new Random();
+
     private final MainService mainService;
 
     public RaceService (MainService mainService) {
@@ -21,7 +23,8 @@ public class RaceService {
     }
 
     public String createRace(String raceType) {
-        String raceId = UUID.randomUUID().toString();
+        // 36 choose N chance of collision
+        String raceId = generateRandomId(6);
         String prompt;
 
         if (raceType.equals("quote")) {
@@ -38,15 +41,18 @@ public class RaceService {
         return raceId;
     }
 
-    public String findRace(String raceType) {
+    public MatchmakingResponse findRace(String raceType) {
         String openRace = openRaces.get(raceType);
         if (openRace == null) {
             String raceId = createRace(raceType);
             openRaces.put(raceType, raceId);
-            return raceId;
+            openRace = raceId;
         }
 
-        return openRace;
+        String playerId = generateRandomId(10);
+
+        races.get(openRace).addPlayer(new Player(playerId));
+        return new MatchmakingResponse(openRace, playerId);
     }
 
     public Race getRace(String raceId) {
@@ -67,6 +73,21 @@ public class RaceService {
          race.addPlayer(player);
 
          return new RaceState(race.isStarted(), race.isFinished(), race.getPlayers());
+    }
+
+    private String generateRandomId(int length) {
+        StringBuilder builder = new StringBuilder();
+
+        String charPool = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        int charPoolLength = charPool.length();
+
+        for (int i = 0; i < length; i++) {
+            int randInt = random.nextInt(charPoolLength);
+            char randChar = charPool.charAt(randInt);
+            builder.append(randChar);
+        }
+
+        return builder.toString();
     }
 
 }

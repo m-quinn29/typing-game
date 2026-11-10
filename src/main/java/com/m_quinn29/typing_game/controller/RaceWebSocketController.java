@@ -7,8 +7,10 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.util.HtmlUtils;
 
+/**
+ * Controller class handling STOMP messaging sockets
+ */
 @Controller
 public class RaceWebSocketController {
     private final RaceService raceService;
@@ -19,7 +21,6 @@ public class RaceWebSocketController {
         this.messagingTemplate = messagingTemplate;
     }
 
-
     @MessageMapping("/race/{raceId}/progress")
     public void progress(@DestinationVariable String raceId, RaceProgressMessage progressMessage) {
         RaceState raceState = raceService.updateRaceProgress(raceId, progressMessage);
@@ -27,6 +28,7 @@ public class RaceWebSocketController {
         messagingTemplate.convertAndSend("/topic/race/" + raceId, raceState);
     }
 }
+
 
 
 

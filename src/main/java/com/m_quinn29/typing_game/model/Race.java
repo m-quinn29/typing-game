@@ -3,6 +3,7 @@ package com.m_quinn29.typing_game.model;
 
 import com.m_quinn29.typing_game.service.MainService;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ public class Race {
     private boolean started;
     private boolean finished;
 
-    private Map<String, Player> players;
+    private final Map<String, Player> players = new HashMap<>();
 
     public Race() {
 

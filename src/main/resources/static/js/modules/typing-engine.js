@@ -3,6 +3,7 @@ export class TypingEngine {
     #gameType = 'practice';
     #raceType = 'quote'
     #raceId = null;
+    #playerId = null;
 
     correctGreen = '#849800'
     wrongRed = '#c94a16';
@@ -240,6 +241,14 @@ export class TypingEngine {
 
     set raceId(raceId) {
         this.#raceId = raceId;
+    }
+
+    get playerId() {
+        return this.#playerId;
+    }
+
+    set playerId(playerId) {
+        this.#playerId = playerId;
     }
 
     //TODO
